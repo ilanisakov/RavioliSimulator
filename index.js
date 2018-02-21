@@ -63,12 +63,15 @@ var displayTweet = function(data){
 	var embed = new Discord.RichEmbed();
 
 	// If the tweet is a retweet
-	if(data.retweeted){
+	if(data.full_text.indexOf("RT ") == 0){
 		embed.setColor('#01940F');
+		embed.setTitle("@" + data.retweeted_status.user.screen_name)
+		embed.setDescription(data.retweeted_status.full_text);
 	} else {
 		embed.setColor('#086A87');
+		embed.setDescription(data.full_text);
 	}
-	embed.setDescription(data.full_text);
+	
 	embed.setThumbnail(data.user.profile_image_url);
 	embed.setAuthor(data.user.name, 'https://www.seeklogo.net/wp-content/uploads/2015/11/twitter-logo.png', data.user.url);
 	embed.setTimestamp();
