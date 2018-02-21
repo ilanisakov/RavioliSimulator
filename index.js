@@ -65,11 +65,10 @@ var displayTweet = function(data){
 	// If the tweet is a retweet
 	if(data.retweeted){
 		embed.setColor('#01940F');
-		embed.setDescription(data.full_text.slice(3,data.full_text.length));
 	} else {
 		embed.setColor('#086A87');
-		embed.setDescription(data.full_text);
 	}
+	embed.setDescription(data.full_text);
 	embed.setThumbnail(data.user.profile_image_url);
 	embed.setAuthor(data.user.name, 'https://www.seeklogo.net/wp-content/uploads/2015/11/twitter-logo.png', data.user.url);
 	embed.setTimestamp();
