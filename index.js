@@ -23,11 +23,10 @@ client.on('ready', () => {
 	console.log('ready');
 
 	getTweets();
-	setInterval(getTweets, 2 * 1000); //Refresh every five seconds
+	setInterval(getTweets, 4 * 1000); //Refresh every five seconds
 })
 
 var getTweets = function(){
-	// This code is so inefficient, I'll optimize it.....one day
 	Twitter.get('lists/statuses', config.params, function(err, data){
 		if(!err){
 			toDisplay = [];
@@ -56,30 +55,44 @@ var displayTweets = function(){
 }
 
 var addTweetToDisplay = function(status){
+	var d = new Date(); console.log(status.id_str + ":" + status.user.screen_name + "@" + d.toUTCString());
+
 	toDisplay.push(status);
 }
 
 var displayTweet = function(data){
 	var embed = new Discord.RichEmbed();
+	var urls = data.entities.urls;
+	var text = "";
 
 	// If the tweet is a retweet
 	if(data.full_text.indexOf("RT ") == 0){
 		embed.setColor('#01940F');
-		embed.setTitle("@" + data.retweeted_status.user.screen_name)
-		embed.setDescription(data.retweeted_status.full_text);
+		embed.setAuthor("@" + data.retweeted_status.user.screen_name, 'https://www.seeklogo.net/wp-content/uploads/2015/11/twitter-logo.png', data.retweeted_status.user.url);
+		embed.setTitle("Retweeted by " + data.user.name);
+		text = data.retweeted_status.full_text;
 	} else {
 		embed.setColor('#086A87');
-		embed.setDescription(data.full_text);
+		embed.setAuthor(data.user.name, 'https://www.seeklogo.net/wp-content/uploads/2015/11/twitter-logo.png', data.user.url);
+		text = data.full_text;
 	}
 	
 	embed.setThumbnail(data.user.profile_image_url);
-	embed.setAuthor(data.user.name, 'https://www.seeklogo.net/wp-content/uploads/2015/11/twitter-logo.png', data.user.url);
 	embed.setTimestamp();
 	embed.setFooter("Volos Group LLC", 'https://cdn.discordapp.com/attachments/190320907032592385/413870182356877312/Updated_Icon.png');
 
 	if(data.entities.media != undefined){
 		embed.setImage(data.entities.media[0].media_url);
 	}
+
+	if(urls != undefined){
+		//Swap Twitter Links for their display name, so you know where the link goes
+		for(var i = 0; i < urls.length; i++){
+			text = text.replace(urls[i].url,"[" + urls[i].display_url + "](" + urls[i].url + ")");
+		}
+	}
+
+	embed.setDescription(text);
 
 	channel.send(embed);
 }
