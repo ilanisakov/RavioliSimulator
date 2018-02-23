@@ -8,7 +8,7 @@ var config = require('./config.js');
 var Twitter = new twit(config);
 
 var channel;
-var lastStatusID = "";
+var lastStatusID = [];
 var toDisplay = [];
 
 // Commands from user message
@@ -31,14 +31,15 @@ var getTweets = function(){
 		if(!err){
 			toDisplay = [];
 			data.some(function(status){
-				if(status.id_str == lastStatusID){
+				if(status.id_str == lastStatusID[0] || status.id_str == lastStatusID[1]){
 					return true; // Breaks the some if true
 				} else {
 					addTweetToDisplay(status);
 				}
 			});	
 
-			lastStatusID = data[0].id_str;
+			lastStatusID[0] = data[0].id_str;
+			lastStatusID[1] = data[1].id_str;
 			displayTweets();
 
 		} else {
