@@ -17,10 +17,11 @@ class CoinMarketCapModule {
 		request(url, function(error, response, body) {
 			if(!error){
 				var data = JSON.parse(body);
-				if(!data.error)
+				if(!data.error){
 					channel.send(data[0].name + ": $" + data[0].price_usd + " | " + data[0].price_btc + " BTC");
-				else
+				}else{
 					channel.send("That Token Does Not Exist :(");
+				}
 			} else {
 				throw error;
 			}
@@ -40,6 +41,34 @@ class CoinMarketCapModule {
 				throw error;
 			}
 		});
+	}
+
+	// Displays a tweet in a rich embed to the display channel
+	displayTweet(data){
+		var embed = new Discord.RichEmbed();
+
+		embed.setColor('#01940F');
+		embed.setAuthor(data.name + "[" + data.symbol + "]");
+		embed.setTitle("Price: $" + data[0].price_usd + " | " + data[0].price_btc + " BTC" + data.price_usd );		
+		embed.setThumbnail(data.user.profile_image_url);
+
+		embed.setTimestamp();
+		embed.setFooter("Volos Group LLC", 'https://cdn.discordapp.com/attachments/190320907032592385/413870182356877312/Updated_Icon.png');
+
+		if(data.entities.media != undefined){
+			embed.setImage(data.entities.media[0].media_url);
+		}
+
+		if(urls != undefined){
+			//Swap Twitter Links for their display name, so you know where the link goes
+			for(var i = 0; i < urls.length; i++){
+				text = text.replace(urls[i].url,"[" + urls[i].display_url + "](" + urls[i].url + ")");
+			}
+		}
+
+		embed.setDescription(text);
+
+		displayChannel.send(embed);
 	}
 
 	init(){

@@ -29,20 +29,27 @@ class TwitterModule {
 
 	// Displays a tweet in a rich embed to the display channel
 	displayTweet(data){
+		//console.log(data.entities)
 		var embed = new Discord.RichEmbed();
 		var urls = data.entities.urls;
 		var text = "";
+		var tweetUrl = "";
+		var profileUrl = "";
 
 		// If the tweet is a retweet
 		if(data.full_text.indexOf("RT ") == 0){
-			embed.setColor('#01940F');
-			embed.setAuthor("@" + data.retweeted_status.user.screen_name, data.retweeted_status.user.profile_image_url, data.retweeted_status.user.url);
-			embed.setTitle("Retweeted by " + data.user.name);
 			text = data.retweeted_status.full_text;
+			tweetUrl = "https://twitter.com/" + data.retweeted_status.user.screen_name + "/status/" + data.id_str;
+			profileUrl = "https://twitter.com/" + data.retweeted_status.user.screen_name;
+			embed.setColor('#01940F');
+			embed.setAuthor("@" + data.retweeted_status.user.screen_name, data.retweeted_status.user.profile_image_url, profileUrl);
+			embed.setTitle("Retweeted by " + data.user.name);
 		} else {
-			embed.setColor('#086A87');
-			embed.setAuthor(data.user.name, data.user.profile_image_url, data.user.url);
 			text = data.full_text;
+			tweetUrl = "https://twitter.com/" + data.user.screen_name + "/status/" + data.id_str;
+			profileUrl = "https://twitter.com/" + data.user.screen_name;
+			embed.setColor('#086A87');
+			embed.setAuthor(data.user.name, data.user.profile_image_url, profileUrl);			
 		}
 		
 		embed.setThumbnail(data.user.profile_image_url);
@@ -61,6 +68,7 @@ class TwitterModule {
 		}
 
 		embed.setDescription(text);
+		embed.setURL(tweetUrl);
 
 		displayChannel.send(embed);
 	}

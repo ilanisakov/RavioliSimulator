@@ -36,8 +36,8 @@ client.on('ready', () => {
 	TwitterBot = new TwitterModule(config,channel);
 	TwitterBot.run();
 
-	CMCBot = new CoinMarketCapModule();
-	CMCBot.init();
+	// CMCBot = new CoinMarketCapModule();
+	// CMCBot.init();
 
 	console.log('Bot Ready');
 
